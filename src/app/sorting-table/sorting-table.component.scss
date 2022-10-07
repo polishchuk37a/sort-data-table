@@ -1,0 +1,15 @@
+.sorting-table {
+  max-width: 500px;
+  width: 100%;
+  margin: 0 auto;
+  border: 1px solid black;
+
+  .table-header {
+    background-color: gray;
+
+    .sort {
+      font-family: "Roboto Light", sans-serif;
+      font-size: 17px;
+    }
+  }
+}
