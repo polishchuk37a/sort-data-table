@@ -10,7 +10,6 @@ import {PersonInfo} from "../../interfaces/person-info";
 })
 export class SortComponent {
   @Input() selectedOrder = Order.Default;
-
   @Input() title: string;
   @Output() onOrderChange = new EventEmitter<SortData>();
 
@@ -41,6 +40,5 @@ export class SortComponent {
     }
 
     this.onOrderChange.emit({title: this.title as keyof PersonInfo, order: this.selectedOrder});
-    // console.log({title: this.title as keyof PersonInfo, order: this.selectedOrder})
   }
 }

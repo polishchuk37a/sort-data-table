@@ -36,7 +36,7 @@ export class SortingTableComponent implements OnInit, OnDestroy {
       ).subscribe();
   }
 
-  resetOrders(sortData: SortData) {
+  resetOrderOnOrderChange(sortData: SortData) {
     this.columnName = this.columnName.map(column => {
       if (column.title !== sortData.title) {
         column.order = Order.Default;
@@ -51,7 +51,7 @@ export class SortingTableComponent implements OnInit, OnDestroy {
   }
 
   sortData(sortData: SortData): void {
-    this.resetOrders(sortData);
+    this.resetOrderOnOrderChange(sortData);
 
     switch (sortData.order) {
       case Order.Asc:
