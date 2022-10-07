@@ -14,7 +14,7 @@ import {SortService} from "../services/sort.service";
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class SortingTableComponent implements OnInit, OnDestroy {
-  person: Person[];
+  tableData: Person[];
   tableHeaderColumn = [
     {title: 'id', order: Order.Default},
     {title: 'name', order: Order.Default},
@@ -31,7 +31,7 @@ export class SortingTableComponent implements OnInit, OnDestroy {
     this.personInfoService.getPersonInfo()
       .pipe(
         tap(value => {
-          this.person = value;
+          this.tableData = value;
         }),
         finalize(() => this.changeDetectorRef.markForCheck()),
         takeUntil(this.unsubscribe$)
@@ -54,7 +54,7 @@ export class SortingTableComponent implements OnInit, OnDestroy {
 
   sortData(sort: Sort): void {
     this.resetOrderOnOrderChange(sort);
-    this.sortService.sort(sort, this.person);
+    this.sortService.sort(sort, this.tableData);
   }
 
   ngOnDestroy(): void {

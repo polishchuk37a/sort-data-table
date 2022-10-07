@@ -8,18 +8,18 @@ import {Person} from "../interfaces/person";
 })
 export class SortService {
 
-  sort(sort: Sort, person: Person[]): void {
+  sort(sort: Sort, tableData: Person[]): void {
     switch (sort.order) {
       case Order.Asc:
-        person.sort((a, b) => a[sort.title] > b[sort.title] ? 1 : -1);
+        tableData = tableData.sort((a, b) => a[sort.title] > b[sort.title] ? 1 : -1);
         break;
 
       case Order.Desc:
-        person.sort((a, b) => a[sort.title] < b[sort.title] ? 1 : -1);
+        tableData = tableData.sort((a, b) => a[sort.title] < b[sort.title] ? 1 : -1);
         break;
 
       case Order.Default:
-        person.sort((a, b) => a.id > b.id ? 1 : -1);
+        tableData = tableData.sort((a, b) => a.id > b.id ? 1 : -1);
         break;
 
       default:
