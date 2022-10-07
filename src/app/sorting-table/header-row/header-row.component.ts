@@ -1,7 +1,7 @@
 import {Component, EventEmitter, Input, Output} from '@angular/core';
 import {Order} from "../../enums/order";
-import {SortData} from "../../interfaces/sort-data";
-import {PersonInfo} from "../../interfaces/person-info";
+import {Sort} from "../../interfaces/sort";
+import {Person} from "../../interfaces/person";
 
 @Component({
   selector: 'app-header-row',
@@ -11,7 +11,7 @@ import {PersonInfo} from "../../interfaces/person-info";
 export class SortComponent {
   @Input() selectedOrder = Order.Default;
   @Input() title: string;
-  @Output() onOrderChange = new EventEmitter<SortData>();
+  @Output() orderChanged = new EventEmitter<Sort>();
 
   get order(): string {
     switch (this.selectedOrder) {
@@ -20,9 +20,6 @@ export class SortComponent {
 
       case Order.Desc:
         return 'Desc';
-
-      case Order.Default:
-        return 'Default';
 
       default:
         return 'Default';
@@ -39,6 +36,6 @@ export class SortComponent {
       this.selectedOrder = this.selectedOrder === Order.Asc ? Order.Desc : Order.Default;
     }
 
-    this.onOrderChange.emit({title: this.title as keyof PersonInfo, order: this.selectedOrder});
+    this.orderChanged.emit({title: this.title as keyof Person, order: this.selectedOrder});
   }
 }

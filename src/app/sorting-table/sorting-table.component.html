@@ -1,13 +1,13 @@
 <table class="sorting-table">
   <thead class="table-header">
   <tr class="header-cells">
-    <th class="sort" *ngFor="let column of columnName">
-      <app-header-row [title]="column.title" [selectedOrder]="column.order" (onOrderChange)="sortData($event)"></app-header-row>
+    <th class="sort" *ngFor="let column of tableHeaderColumn">
+      <app-header-row [title]="column.title" [selectedOrder]="column.order" (orderChanged)="sortData($event)"></app-header-row>
     </th>
   </tr>
   </thead>
   <tbody>
-  <tr *ngFor="let data of personInfoData">
+  <tr *ngFor="let data of person">
     <th>{{data.id}}</th>
     <th>{{data.name}}</th>
     <th>{{data.username}}</th>

@@ -1,5 +1,5 @@
 <div class="table-header-cell">
-  <p (click)="toggleOrder()">{{title}}
+  <p class="title" (click)="toggleOrder()">{{title}}
     <span class="arrow" [ngSwitch]="order">
       <span class="arrow-up" *ngSwitchCase="'Asc'"></span>
       <span class="arrow-down" *ngSwitchCase="'Desc'"></span>

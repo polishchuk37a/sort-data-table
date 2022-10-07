@@ -1,10 +1,11 @@
 import {ChangeDetectionStrategy, ChangeDetectorRef, Component, OnDestroy, OnInit} from '@angular/core';
-import {PersonInfo} from "../interfaces/person-info";
+import {Person} from "../interfaces/person";
 import {Subject} from "rxjs";
 import {PersonInfoService} from "../services/person-info.service";
 import {finalize, takeUntil, tap} from "rxjs/operators";
 import {Order} from "../enums/order";
-import {SortData} from "../interfaces/sort-data";
+import {Sort} from "../interfaces/sort";
+import {SortService} from "../services/sort.service";
 
 @Component({
   selector: 'app-sorting-table',
@@ -13,8 +14,8 @@ import {SortData} from "../interfaces/sort-data";
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class SortingTableComponent implements OnInit, OnDestroy {
-  personInfoData: PersonInfo[];
-  columnName = [
+  person: Person[];
+  tableHeaderColumn = [
     {title: 'id', order: Order.Default},
     {title: 'name', order: Order.Default},
     {title: 'username', order: Order.Default}
@@ -23,52 +24,37 @@ export class SortingTableComponent implements OnInit, OnDestroy {
   private unsubscribe$ = new Subject<void>();
 
   constructor(private readonly personInfoService: PersonInfoService,
-              private readonly changeDetectorRef: ChangeDetectorRef) { }
+              private readonly changeDetectorRef: ChangeDetectorRef,
+              private readonly sortService: SortService) { }
 
   ngOnInit(): void {
     this.personInfoService.getPersonInfo()
       .pipe(
         tap(value => {
-          this.personInfoData = value;
+          this.person = value;
         }),
         finalize(() => this.changeDetectorRef.markForCheck()),
         takeUntil(this.unsubscribe$)
       ).subscribe();
   }
 
-  resetOrderOnOrderChange(sortData: SortData) {
-    this.columnName = this.columnName.map(column => {
-      if (column.title !== sortData.title) {
+  resetOrderOnOrderChange(sort: Sort): void {
+    this.tableHeaderColumn = this.tableHeaderColumn.map(column => {
+      if (column.title !== sort.title) {
         column.order = Order.Default;
 
         return column;
-      } else {
-        column.order = sortData.order;
       }
+
+      column.order = sort.order;
 
       return column;
     })
   }
 
-  sortData(sortData: SortData): void {
-    this.resetOrderOnOrderChange(sortData);
-
-    switch (sortData.order) {
-      case Order.Asc:
-        this.personInfoData = this.personInfoData.sort((a, b) => a[sortData.title] > b[sortData.title] ? 1 : -1);
-        break;
-
-      case Order.Desc:
-        this.personInfoData = this.personInfoData.sort((a, b) => a[sortData.title] < b[sortData.title] ? 1 : -1);
-        break;
-
-      case Order.Default:
-        this.personInfoData = this.personInfoData.sort((a, b) => a.id > b.id ? 1 : -1);
-        break;
-
-      default:
-        break;
-    }
+  sortData(sort: Sort): void {
+    this.resetOrderOnOrderChange(sort);
+    this.sortService.sort(sort, this.person);
   }
 
   ngOnDestroy(): void {

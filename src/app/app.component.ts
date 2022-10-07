@@ -1,7 +1,7 @@
 import {ChangeDetectionStrategy, ChangeDetectorRef, Component, OnDestroy, OnInit} from '@angular/core';
 import {PersonInfoService} from "./services/person-info.service";
 import {finalize, takeUntil, tap} from "rxjs/operators";
-import {PersonInfo} from "./interfaces/person-info";
+import {Person} from "./interfaces/person";
 import {Subject} from "rxjs";
 
 @Component({
