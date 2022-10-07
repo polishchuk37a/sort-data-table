@@ -8,22 +8,21 @@ import {Person} from "../interfaces/person";
 })
 export class SortService {
 
-  sort(sort: Sort, tableData: Person[]): void {
+  sort(sort: Sort, tableData: Person[]): Person[] {
+    const tableSource = tableData.slice();
+
     switch (sort.order) {
       case Order.Asc:
-        tableData = tableData.sort((a, b) => a[sort.title] > b[sort.title] ? 1 : -1);
-        break;
+        return tableSource.sort((a, b) => a[sort.title] > b[sort.title] ? 1 : -1);
 
       case Order.Desc:
-        tableData = tableData.sort((a, b) => a[sort.title] < b[sort.title] ? 1 : -1);
-        break;
+        return tableSource.sort((a, b) => a[sort.title] < b[sort.title] ? 1 : -1);
 
       case Order.Default:
-        tableData = tableData.sort((a, b) => a.id > b.id ? 1 : -1);
-        break;
+        return tableSource.sort((a, b) => a.id > b.id ? 1 : -1);
 
       default:
-        break;
+        return tableSource;
     }
   }
 }

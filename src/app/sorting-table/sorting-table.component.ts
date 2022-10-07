@@ -54,7 +54,7 @@ export class SortingTableComponent implements OnInit, OnDestroy {
 
   sortData(sort: Sort): void {
     this.resetOrderOnOrderChange(sort);
-    this.sortService.sort(sort, this.tableData);
+    this.tableData = this.sortService.sort(sort, this.tableData);
   }
 
   ngOnDestroy(): void {
