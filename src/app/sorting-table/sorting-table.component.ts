@@ -68,7 +68,7 @@ export class SortingTableComponent implements OnInit, OnDestroy {
       .pipe(
         tap(value => {
           this.tableData = value;
-          let pageIndex = (this.selectedPage - 1) * this.selectedCount;
+          const pageIndex = (this.selectedPage - 1) * this.selectedCount;
           this.albums = this.tableData.slice(pageIndex, this.selectedCount);
         }),
         finalize(() => this.changeDetectorRef.markForCheck()),
@@ -87,8 +87,8 @@ export class SortingTableComponent implements OnInit, OnDestroy {
   }
 
   sliceAlbum(): void {
-    let startIndex = (this.selectedPage - 1) * this.selectedCount;
-    let endIndex = (this.selectedPage - 1) * this.selectedCount + this.selectedCount;
+    const startIndex = (this.selectedPage - 1) * this.selectedCount;
+    const endIndex = (this.selectedPage - 1) * this.selectedCount + this.selectedCount;
     this.albums = this.tableData.slice(startIndex, endIndex);
   }
 
