@@ -1,7 +1,7 @@
 import {Injectable} from '@angular/core';
 import {HttpClient} from "@angular/common/http";
 import {Observable} from "rxjs";
-import {Person} from "../interfaces/person";
+import {Album} from "../interfaces/album";
 
 @Injectable({
   providedIn: 'root'
@@ -10,7 +10,7 @@ export class PersonInfoService {
 
   constructor(private readonly http: HttpClient) { }
 
-  getPersonInfo(): Observable<Person[]> {
-    return this.http.get<Person[]>('https://jsonplaceholder.typicode.com/users');
+  getPersonAlbums(): Observable<Album[]> {
+    return this.http.get<Album[]>('https://jsonplaceholder.typicode.com/albums');
   }
 }

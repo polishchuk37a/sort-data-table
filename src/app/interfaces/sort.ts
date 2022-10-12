@@ -1,7 +1,7 @@
-import {Person} from "./person";
 import {Order} from "../enums/order";
+import {Album} from "./album";
 
 export interface Sort {
-  title: keyof Person;
+  title: keyof Album;
   order: Order;
 }

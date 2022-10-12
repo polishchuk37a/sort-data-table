@@ -1,14 +1,14 @@
 import { Injectable } from '@angular/core';
 import {Order} from "../enums/order";
 import {Sort} from "../interfaces/sort";
-import {Person} from "../interfaces/person";
+import {Album} from "../interfaces/album";
 
 @Injectable({
   providedIn: 'root'
 })
 export class SortService {
 
-  sort(sort: Sort, tableData: Person[]): Person[] {
+  sort(sort: Sort, tableData: Album[]): Album[] {
     const tableSource = tableData.slice();
 
     switch (sort.order) {

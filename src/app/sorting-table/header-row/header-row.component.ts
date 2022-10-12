@@ -1,7 +1,7 @@
 import {Component, EventEmitter, Input, Output} from '@angular/core';
 import {Order} from "../../enums/order";
 import {Sort} from "../../interfaces/sort";
-import {Person} from "../../interfaces/person";
+import {Album} from "../../interfaces/album";
 
 @Component({
   selector: 'app-header-row',
@@ -36,6 +36,6 @@ export class SortComponent {
       this.selectedOrder = this.selectedOrder === Order.Asc ? Order.Desc : Order.Default;
     }
 
-    this.orderChanged.emit({title: this.title as keyof Person, order: this.selectedOrder});
+    this.orderChanged.emit({title: this.title as keyof  Album, order: this.selectedOrder});
   }
 }

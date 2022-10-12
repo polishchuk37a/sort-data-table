@@ -1,15 +1,75 @@
 .sorting-table {
-  max-width: 500px;
-  width: 100%;
+  display: flex;
+  max-width: 610px;
   margin: 0 auto;
-  border: 1px solid black;
 
-  .table-header {
-    background-color: gray;
+  .table-pagination {
 
-    .sort {
-      font-family: "Roboto Light", sans-serif;
-      font-size: 17px;
+    .table-select {
+      display: flex;
+
+      .table {
+        border: 1px solid #d5d9d9;
+        box-shadow: rgba(213, 217, 217, .5) 0 2px 5px 0;
+        width: 610px;
+
+        .table-header {
+          background-color: #e6e6e6;
+
+          .sort {
+            font-family: "Roboto Light", sans-serif;
+            font-size: 17px;
+          }
+        }
+      }
+
+      .count-select {
+        margin-left: 5px;
+        background: #fff;
+        border: 1px solid #d5d9d9;
+        box-shadow: rgba(213, 217, 217, .5) 0 2px 5px 0;
+        color: #0f1111;
+        cursor: pointer;
+        font-family: "Amazon Ember",sans-serif;
+        font-size: 13px;
+        line-height: 29px;
+        padding: 0 10px;
+      }
+    }
+
+    .pagination {
+      margin-top: 10px;
+
+      .first-page-btn:disabled {
+        background: #d5d9d9;
+        cursor: unset;
+      }
+
+      .last-page-btn:disabled {
+        background: #d5d9d9;
+        cursor: unset;
+      }
+
+      .pagination-page {
+        margin: 0 2px;
+        background-color: #fff;
+        border: 1px solid #d5d9d9;
+        border-radius: 5px;
+        box-shadow: rgba(213, 217, 217, .5) 0 2px 5px 0;
+        color: #0f1111;
+        cursor: pointer;
+        display: inline-block;
+        font-size: 13px;
+        line-height: 29px;
+        padding: 0 10px;
+      }
+
+      .activePage {
+        background-color: #2b7279;
+      }
     }
   }
 }
+
+
+

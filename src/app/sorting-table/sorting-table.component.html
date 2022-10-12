@@ -1,16 +1,41 @@
-<table class="sorting-table">
-  <thead class="table-header">
-  <tr class="header-cells">
-    <th class="sort" *ngFor="let column of tableHeaderColumn">
-      <app-header-row [title]="column.title" [selectedOrder]="column.order" (orderChanged)="sortData($event)"></app-header-row>
-    </th>
-  </tr>
-  </thead>
-  <tbody>
-  <tr *ngFor="let data of tableData">
-    <th>{{data.id}}</th>
-    <th>{{data.name}}</th>
-    <th>{{data.username}}</th>
-  </tr>
-  </tbody>
-</table>
+<div class="sorting-table">
+  <div class="table-pagination">
+    <div class="table-select">
+      <table class="table">
+        <thead class="table-header">
+        <tr class="header-cells">
+          <th class="sort" *ngFor="let column of tableHeaderColumn">
+            <app-header-row [title]="column.title" [selectedOrder]="column.order" (orderChanged)="sortData($event)"></app-header-row>
+          </th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr *ngFor="let data of albums">
+          <th>{{data.id}}</th>
+          <th>{{data.title}}</th>
+        </tr>
+        </tbody>
+      </table>
+
+      <select class="count-select" [formControl]="albumCountControl" (change)="changeTableSize(albumCountControl.value)">
+        <option *ngFor="let album of albumCount">{{album.count}}</option>
+      </select>
+    </div>
+
+
+    <div class="pagination">
+      <button class="first-page-btn pagination-page" (click)="changePage(1)" [disabled]="isFirstPageBtnDisabled">First</button>
+      <button
+        class="pagination-page"
+        [class.activePage]="selectedPage === page"
+        *ngFor="let page of pageNumbers"
+        (click)="changePage(page)"
+      >{{page}}</button>
+      <button class="last-page-btn pagination-page" [disabled]="isLastPageBtnDisabled" (click)="changePage(pageNumbers.length)">Last</button>
+    </div>
+  </div>
+
+
+
+</div>
+
