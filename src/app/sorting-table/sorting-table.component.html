@@ -17,8 +17,8 @@
         </tbody>
       </table>
 
-      <select class="count-select" [formControl]="albumCountControl" (change)="changeTableSize(albumCountControl.value)">
-        <option *ngFor="let album of albumCount">{{album.count}}</option>
+      <select class="count-select" [formControl]="albumCountControl">
+        <option [value]="album.count" *ngFor="let album of albumCount">{{album.count}}</option>
       </select>
     </div>
 

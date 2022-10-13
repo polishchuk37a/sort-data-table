@@ -1,12 +1,13 @@
 import {ChangeDetectionStrategy, ChangeDetectorRef, Component, OnDestroy, OnInit} from '@angular/core';
-import {Subject} from "rxjs";
-import {PersonInfoService} from "../services/person-info.service";
-import {finalize, takeUntil, tap} from "rxjs/operators";
+import {Observable, Subject} from "rxjs";
+import {AlbumService} from "../services/album.service";
+import {finalize, switchMap, takeUntil, tap} from "rxjs/operators";
 import {Order} from "../enums/order";
 import {Sort} from "../interfaces/sort";
 import {SortService} from "../services/sort.service";
 import {Album} from "../interfaces/album";
 import {FormControl} from "@angular/forms";
+import {TableListService} from "../services/table-list.service";
 
 @Component({
   selector: 'app-sorting-table',
@@ -15,8 +16,8 @@ import {FormControl} from "@angular/forms";
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class SortingTableComponent implements OnInit, OnDestroy {
-  tableData: Album[];
   albums: Album[];
+  pages: number[] = [];
 
   tableHeaderColumn = [
     {title: 'id', order: Order.Default},
@@ -29,19 +30,23 @@ export class SortingTableComponent implements OnInit, OnDestroy {
     {count: 15}
   ];
 
-  albumCountControl = new FormControl(5);
+  albumCountControl = new FormControl(this.albumCount[0].count);
   selectedCount = this.albumCountControl.value;
   selectedPage = 1;
 
   private unsubscribe$ = new Subject<void>();
 
   get pageNumbers(): number[] {
-    if (this.tableData) {
-      return Array(Math.ceil(this.tableData.length / this.selectedCount))
-        .fill(0).map((value, index) => index + 1);
-    }
+    this.tableListService.tableList
+      .pipe(
+        tap(value => {
+          this.pages = Array(Math.ceil(value.length / this.selectedCount)).fill(0).map((value, index) => index + 1)
+        }),
+        finalize(() => this.changeDetectorRef.markForCheck()),
+        takeUntil(this.unsubscribe$)
+      ).subscribe();
 
-    return [];
+    return this.pages;
   }
 
   get isFirstPageBtnDisabled(): boolean {
@@ -52,24 +57,27 @@ export class SortingTableComponent implements OnInit, OnDestroy {
     return this.selectedPage === this.pageNumbers.length;
   }
 
-  constructor(private readonly personInfoService: PersonInfoService,
+  constructor(private readonly albumService: AlbumService,
               private readonly changeDetectorRef: ChangeDetectorRef,
-              private readonly sortService: SortService) { }
+              private readonly sortService: SortService,
+              private readonly tableListService: TableListService) { }
 
   ngOnInit(): void {
     this.albumCountControl.valueChanges
       .pipe(
-        tap(value => this.selectedCount = Number(value)),
+        tap(value => {
+          this.selectedCount = value;
+          this.changeTableSize(this.selectedCount);
+        }),
         finalize(() => this.changeDetectorRef.markForCheck()),
         takeUntil(this.unsubscribe$)
       ).subscribe();
 
-    this.personInfoService.getPersonAlbums()
+    this.tableListService.getAlbums()
       .pipe(
-        tap(value => {
-          this.tableData = value;
-          const pageIndex = (this.selectedPage - 1) * this.selectedCount;
-          this.albums = this.tableData.slice(pageIndex, this.selectedCount);
+        tap(() => {
+          this.tableListService.getIndexesForSlice(this.selectedPage, this.selectedCount);
+          this.albums = this.tableListService.sliceTableList();
         }),
         finalize(() => this.changeDetectorRef.markForCheck()),
         takeUntil(this.unsubscribe$)
@@ -78,7 +86,7 @@ export class SortingTableComponent implements OnInit, OnDestroy {
 
   changePage(page: number): void {
     this.selectedPage = page;
-    this.sliceAlbum();
+    this.getIndexesAndSliceAlbum();
   }
 
   changeTableSize(count: number): void {
@@ -86,10 +94,9 @@ export class SortingTableComponent implements OnInit, OnDestroy {
     this.changePage(1);
   }
 
-  sliceAlbum(): void {
-    const startIndex = (this.selectedPage - 1) * this.selectedCount;
-    const endIndex = (this.selectedPage - 1) * this.selectedCount + this.selectedCount;
-    this.albums = this.tableData.slice(startIndex, endIndex);
+  getIndexesAndSliceAlbum(): void {
+    this.tableListService.getIndexesForSlice(this.selectedPage, this.selectedCount);
+    this.albums = this.tableListService.sliceTableList();
   }
 
   resetOrderOnOrderChange(sort: Sort): void {

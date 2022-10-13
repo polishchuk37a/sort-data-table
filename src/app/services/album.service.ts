@@ -6,11 +6,11 @@ import {Album} from "../interfaces/album";
 @Injectable({
   providedIn: 'root'
 })
-export class PersonInfoService {
+export class AlbumService {
 
   constructor(private readonly http: HttpClient) { }
 
-  getPersonAlbums(): Observable<Album[]> {
+  getAlbumData(): Observable<Album[]> {
     return this.http.get<Album[]>('https://jsonplaceholder.typicode.com/albums');
   }
 }
