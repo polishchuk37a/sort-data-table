@@ -1,7 +1,7 @@
 import {ChangeDetectionStrategy, ChangeDetectorRef, Component, OnDestroy, OnInit} from '@angular/core';
-import {Observable, Subject} from "rxjs";
+import {Subject} from "rxjs";
 import {AlbumService} from "../services/album.service";
-import {finalize, switchMap, takeUntil, tap} from "rxjs/operators";
+import {finalize, takeUntil, tap} from "rxjs/operators";
 import {Order} from "../enums/order";
 import {Sort} from "../interfaces/sort";
 import {SortService} from "../services/sort.service";
@@ -17,7 +17,6 @@ import {TableListService} from "../services/table-list.service";
 })
 export class SortingTableComponent implements OnInit, OnDestroy {
   albums: Album[];
-  pages: number[] = [];
 
   tableHeaderColumn = [
     {title: 'id', order: Order.Default},
@@ -34,19 +33,12 @@ export class SortingTableComponent implements OnInit, OnDestroy {
   selectedCount = this.albumCountControl.value;
   selectedPage = 1;
 
+  private tableListLength = 0;
+  private selectedSort: Sort;
   private unsubscribe$ = new Subject<void>();
 
   get pageNumbers(): number[] {
-    this.tableListService.tableList
-      .pipe(
-        tap(value => {
-          this.pages = Array(Math.ceil(value.length / this.selectedCount)).fill(0).map((value, index) => index + 1)
-        }),
-        finalize(() => this.changeDetectorRef.markForCheck()),
-        takeUntil(this.unsubscribe$)
-      ).subscribe();
-
-    return this.pages;
+    return Array(Math.ceil(this.tableListLength / this.selectedCount)).fill(0).map((value, index) => index + 1);
   }
 
   get isFirstPageBtnDisabled(): boolean {
@@ -66,37 +58,46 @@ export class SortingTableComponent implements OnInit, OnDestroy {
     this.albumCountControl.valueChanges
       .pipe(
         tap(value => {
-          this.selectedCount = value;
-          this.changeTableSize(this.selectedCount);
+          this.selectedCount = Number(value);
+          this.selectedPage = 1;
+          const sliceData = this.tableListService.getSliceData(this.selectedPage, this.selectedCount);
+          this.tableListService.getActualList(sliceData);
         }),
         finalize(() => this.changeDetectorRef.markForCheck()),
         takeUntil(this.unsubscribe$)
       ).subscribe();
 
-    this.tableListService.getAlbums()
+    this.albumService.getAlbumData()
       .pipe(
-        tap(() => {
-          this.tableListService.getIndexesForSlice(this.selectedPage, this.selectedCount);
-          this.albums = this.tableListService.sliceTableList();
+        tap((albums) => {
+          this.tableListLength = albums.length;
+          this.tableListService.setTableList(albums);
+          const sliceData = this.tableListService.getSliceData(this.selectedPage, this.selectedCount);
+          this.tableListService.getActualList(sliceData);
         }),
         finalize(() => this.changeDetectorRef.markForCheck()),
+        takeUntil(this.unsubscribe$)
+      ).subscribe();
+
+    this.tableListService.getTableList$()
+      .pipe(
+        tap(actualList => {
+          if (this.selectedSort) {
+            this.albums = this.sortService.sort(this.selectedSort, actualList);
+          } else {
+            this.albums = actualList;
+          }
+
+          this.changeDetectorRef.markForCheck();
+        }),
         takeUntil(this.unsubscribe$)
       ).subscribe();
   }
 
   changePage(page: number): void {
     this.selectedPage = page;
-    this.getIndexesAndSliceAlbum();
-  }
-
-  changeTableSize(count: number): void {
-    this.selectedCount = Number(count);
-    this.changePage(1);
-  }
-
-  getIndexesAndSliceAlbum(): void {
-    this.tableListService.getIndexesForSlice(this.selectedPage, this.selectedCount);
-    this.albums = this.tableListService.sliceTableList();
+    const sliceData = this.tableListService.getSliceData(page, this.selectedCount);
+    this.tableListService.getActualList(sliceData);
   }
 
   resetOrderOnOrderChange(sort: Sort): void {
@@ -114,6 +115,7 @@ export class SortingTableComponent implements OnInit, OnDestroy {
   }
 
   sortData(sort: Sort): void {
+    this.selectedSort = sort;
     this.resetOrderOnOrderChange(sort);
     this.albums = this.sortService.sort(sort, this.albums);
   }
