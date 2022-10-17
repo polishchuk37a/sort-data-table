@@ -60,8 +60,8 @@ export class SortingTableComponent implements OnInit, OnDestroy {
         tap(value => {
           this.selectedCount = Number(value);
           this.selectedPage = 1;
-          const sliceData = this.tableListService.getSliceData(this.selectedPage, this.selectedCount);
-          this.tableListService.getActualList(sliceData);
+          const sliceData = this.tableListService.getSlicedData(this.selectedPage, this.selectedCount);
+          this.tableListService.setActualList(sliceData);
         }),
         finalize(() => this.changeDetectorRef.markForCheck()),
         takeUntil(this.unsubscribe$)
@@ -72,8 +72,8 @@ export class SortingTableComponent implements OnInit, OnDestroy {
         tap((albums) => {
           this.tableListLength = albums.length;
           this.tableListService.setTableList(albums);
-          const sliceData = this.tableListService.getSliceData(this.selectedPage, this.selectedCount);
-          this.tableListService.getActualList(sliceData);
+          const sliceData = this.tableListService.getSlicedData(this.selectedPage, this.selectedCount);
+          this.tableListService.setActualList(sliceData);
         }),
         finalize(() => this.changeDetectorRef.markForCheck()),
         takeUntil(this.unsubscribe$)
@@ -82,11 +82,8 @@ export class SortingTableComponent implements OnInit, OnDestroy {
     this.tableListService.getTableList$()
       .pipe(
         tap(actualList => {
-          if (this.selectedSort) {
-            this.albums = this.sortService.sort(this.selectedSort, actualList);
-          } else {
-            this.albums = actualList;
-          }
+          const sort = this.selectedSort ?? Order.Default;
+          this.albums = this.sortService.sort(sort, actualList);
 
           this.changeDetectorRef.markForCheck();
         }),
@@ -96,8 +93,8 @@ export class SortingTableComponent implements OnInit, OnDestroy {
 
   changePage(page: number): void {
     this.selectedPage = page;
-    const sliceData = this.tableListService.getSliceData(page, this.selectedCount);
-    this.tableListService.getActualList(sliceData);
+    const sliceData = this.tableListService.getSlicedData(page, this.selectedCount);
+    this.tableListService.setActualList(sliceData);
   }
 
   resetOrderOnOrderChange(sort: Sort): void {

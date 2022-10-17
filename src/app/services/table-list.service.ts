@@ -18,11 +18,11 @@ export class TableListService {
     this._tableList = data;
   }
 
-  getActualList(sliceData: Slice): void {
+  setActualList(sliceData: Slice): void {
     this._localTableList$.next(this._tableList.slice(sliceData.start, sliceData.end));
   }
 
-  getSliceData(selectedPage: number, selectedCount: number): Slice {
+  getSlicedData(selectedPage: number, selectedCount: number): Slice {
     const start = (selectedPage - 1) * selectedCount;
     const end = (selectedPage - 1) * selectedCount + selectedCount;
 
